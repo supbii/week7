@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <style type="text/css">
+        body{margin: 0 20px; display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;}
+        .container{text-align: center;}
+        #text{font-family: 'Noto Serif KR', serif;
+            cursor: pointer; font-size: 2rem; transition: opacity 0.5s;}
+        .text-container{border: 2px solid coral; background-color:floralwhite;
+            padding: 10px; display: inline-block; margin: 15px auto;}
+        .hidden{visibility: hidden;}
+        button{padding: 10px 20px; font-size: 2rem; margin: 10px;
+            width: 65px; height: 65px; background-color: floralwhite;}
+        .head{color: coral; font-weight: 500; font-size: 2rem; margin-bottom: 15px;}
+        .cursor-trail {
+            position: absolute; width: 20px; height: 20px;
+            background-color: coral;
+            border-radius: 50%; pointer-events: none;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="head" class="head">랜덤한 단어들을 추가하고 삭제하며 새로운 문장을 만들어 보세요.</h1>
+        <div class="text-container">
+        <p id="text">제국의 모든 도시에 있는 건물들은 다 각양각색이며 서로 다른 질서에 따라 배치되어 있습니다. 
+            그렇지만 이방인은 낯선 도시에 도착하자마자 솔방울 모양의 탑과 다락방과 건초장들을 찬찬히 바라보며 아무렇게나 이어져 있는 수로, 밭, 쓰레기장 등을 눈으로 좇다가, 곧 어떤 게 군주의 왕궁이고 어떤 게 위대한 사제의 신전이며 여관, 감옥, 빈민가가 어디인지를 금방 구별할 수 있게 됩니다. 
+            그렇게 해서, 누군가가 말하듯, 모든 여행자들은 오직 차이로만 이루어진 도시, 형상이나 형식이 없는 도시를 자신의 머릿속에 간직하게 되고, 특별한 도시들이 그 머리를 가득 채워준다는 가정이 확인됩니다.
+            </p>
+            </div>
+            <button onclick="addRandomWord()">+</button>
+            <button onclick="randomWordDisappear()">-</button>
+    </div>
+    <div id="addClickCount" style="position: absolute;"></div>
+    <div id="removeClickCount" style="position: absolute;"></div>
+
+<script type="text/javascript">
+    function addRandomWord() {
+        const textElement = document.getElementById('text');
+        const words = textElement.textContent.split(' ');
+        const randomWord = words[Math.floor(Math.random() * words.length)];
+        const randomIndex = Math.floor(Math.random() * words.length);
+        words.splice(randomIndex, 0, randomWord);
+        textElement.innerHTML = words.join(' ');
+    }
+
+    function randomWordDisappear() {
+        const textElements = document.querySelectorAll('p');
+        const randomIndex = Math.floor(Math.random() * textElements.length);
+        const selectedText = textElements[randomIndex];
+        const words = selectedText.textContent.split(' ');
+        const randomWordIndex = Math.floor(Math.random() * words.length);
+        const wordToHide = words[randomWordIndex];
+        const hiddenLength = wordToHide.length;
+        for (let i = randomWordIndex; i < words.length; i++) {
+            words[i - hiddenLength] = words[i];
+        }
+        selectedText.innerHTML = words.slice(0, words.length - hiddenLength).join(' ');
+    }
+
+    let addButton = document.getElementById('addButton');
+    let removeButton = document.getElementById('removeButton');
+    let addClickCount = 0;
+    let removeClickCount = 0;
+    addButton.addEventListener('click', (event) => {
+        addClickCount++;
+        addRandomWord();
+        updateClickCount('addClickCount', addClickCount, event.clientX, event.clientY);
+    });
+    removeButton.addEventListener('click', (event) => {
+        removeClickCount++;
+        randomWordDisappear();
+        updateClickCount('removeClickCount', removeClickCount, event.clientX, event.clientY);
+    });
+    document.addEventListener('mousemove', (event) => {
+        updateClickCount('addClickCount', addClickCount, event.clientX, event.clientY);
+        updateClickCount('removeClickCount', removeClickCount, event.clientX, event.clientY);
+    });
+    function updateClickCount(elementId, clickCount, x, y) {
+        let clickCountElement = document.getElementById(elementId);
+        clickCountElement.textContent = `Clicks: ${clickCount}`;
+        clickCountElement.style.left = (x + 10) + 'px';
+        clickCountElement.style.top = (y + 10) + 'px';
+    }
+</script>
+</body>
+</html>
